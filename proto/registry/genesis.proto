@@ -1,0 +1,11 @@
+syntax = "proto3";
+package amparks100.registry.registry;
+
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/amparks100/registry/x/registry/types";
+
+// GenesisState defines the registry module's genesis state.
+message GenesisState {
+    // this line is used by starport scaffolding # genesis/proto/state
+}
