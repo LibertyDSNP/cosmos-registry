@@ -1,0 +1,25 @@
+accounts:
+  - name: taco
+    coins: ["1000token", "1000000000stake"]
+  - name: burrito
+    coins: ["500token", "100000000stake"]
+validator:
+  name: taco
+  staked: "100000000stake"
+faucet:
+  host: ":4501"
+  name: burrito
+  coins: ["5token", "100000stake"]
+host:
+  rpc: ":26659"
+  p2p: ":26658"
+  prof: ":6061"
+  grpc: ":9092"
+  grpc-web: ":9093"
+  api: ":1318"
+  frontend: ":8081"
+  dev-ui: ":12346"
+genesis:
+  chain_id: "bob"
+init:
+  home: "$HOME/Documents/Code/ProjectLiberty/cosmos/registry/.bob"

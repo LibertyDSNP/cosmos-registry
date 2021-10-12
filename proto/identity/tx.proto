@@ -1,0 +1,37 @@
+syntax = "proto3";
+package amparks100.registry.identity;
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "github.com/amparks100/registry/x/identity/types";
+
+// Msg defines the Msg service.
+service Msg {
+      rpc SendIbcRegistration(MsgSendIbcRegistration) returns (MsgSendIbcRegistrationResponse);
+  rpc SendIbcPermissionUpdate(MsgSendIbcPermissionUpdate) returns (MsgSendIbcPermissionUpdateResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgSendIbcRegistration {
+  string creator = 1;
+  string port = 2;
+  string channelID = 3;
+  uint64 timeoutTimestamp = 4;
+  string handle = 5;
+}
+
+message MsgSendIbcRegistrationResponse {
+}
+message MsgSendIbcPermissionUpdate {
+  string creator = 1;
+  string port = 2;
+  string channelID = 3;
+  uint64 timeoutTimestamp = 4;
+  string publicKey = 5;
+  string role = 6;
+  string dsnpId = 7;
+}
+
+message MsgSendIbcPermissionUpdateResponse {
+}
+// this line is used by starport scaffolding # proto/tx/message

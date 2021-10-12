@@ -1,0 +1,22 @@
+package types
+
+const (
+	ROLE_OWNER   uint8 = 0
+	ROLE_PUBLISH uint8 = 1
+
+	PERMISSION_NONE              uint8 = 0x1
+	PERMISSION_PUBLISH           uint8 = 0x2
+	PERMISSION_OWNERSHIPTRANSFER uint8 = 0x3
+	PERMISSION_DELEGATEADD       uint8 = 0x4
+	PERMISSION_DELEGATEREMOVE    uint8 = 0x5
+)
+
+const (
+	ROLE_OWNER_BIT     uint64 = ((1 << PERMISSION_PUBLISH) | (1 << PERMISSION_OWNERSHIPTRANSFER) | (1 << PERMISSION_DELEGATEADD) | (1 << PERMISSION_DELEGATEREMOVE)) << (ROLE_OWNER << 5)
+	ROLE_ANNOUNCER_BIT uint64 = (1 << PERMISSION_PUBLISH) << (ROLE_PUBLISH << 5)
+	ROLE_PERMISSIONS   uint64 = ROLE_OWNER_BIT | ROLE_ANNOUNCER_BIT
+)
+
+func DoesRoleHavePermission(role uint8, permission uint8) bool {
+	return ROLE_PERMISSIONS&((1<<permission)<<(role<<5)) > 0x0
+}

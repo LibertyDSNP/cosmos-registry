@@ -1,0 +1,17 @@
+syntax = "proto3";
+package amparks100.registry.identity;
+
+import "identity/registration.proto";
+import "identity/delegation.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/amparks100/registry/x/identity/types";
+
+// GenesisState defines the identity module's genesis state.
+message GenesisState {
+    string port_id = 1;
+  repeated Registration registrationList = 2 [(gogoproto.nullable) = false];
+  repeated Delegation delegationList = 3 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+package amparks100.registry.identity;
+
+option go_package = "github.com/amparks100/registry/x/identity/types";
+
+message Delegation {
+  string index = 1; 
+  uint64 dsnpId = 2; 
+  string address = 3; 
+  uint32 role = 4; 
+  uint64 id = 5;
+}

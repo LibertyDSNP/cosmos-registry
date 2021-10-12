@@ -1,0 +1,14 @@
+syntax = "proto3";
+package amparks100.registry.identity;
+
+option go_package = "github.com/amparks100/registry/x/identity/types";
+
+
+
+message Registration {
+  string index = 1; 
+  uint64 dsnpId = 2; 
+  string handle = 3; 
+  
+}
+

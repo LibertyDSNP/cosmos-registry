@@ -88,9 +88,9 @@ import (
 
 	"github.com/amparks100/registry/docs"
 
-	registrymodule "github.com/amparks100/registry/x/registry"
-	registrymodulekeeper "github.com/amparks100/registry/x/registry/keeper"
-	registrymoduletypes "github.com/amparks100/registry/x/registry/types"
+	identitymodule "github.com/amparks100/registry/x/identity"
+	identitymodulekeeper "github.com/amparks100/registry/x/identity/keeper"
+	identitymoduletypes "github.com/amparks100/registry/x/identity/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -141,7 +141,7 @@ var (
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
-		registrymodule.AppModuleBasic{},
+		identitymodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -210,7 +210,8 @@ type App struct {
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
-	RegistryKeeper registrymodulekeeper.Keeper
+	ScopedIdentityKeeper capabilitykeeper.ScopedKeeper
+	IdentityKeeper       identitymodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -244,7 +245,7 @@ func New(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
-		registrymoduletypes.StoreKey,
+		identitymoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -343,18 +344,24 @@ func New(
 		&stakingKeeper, govRouter,
 	)
 
-	app.RegistryKeeper = *registrymodulekeeper.NewKeeper(
+	scopedIdentityKeeper := app.CapabilityKeeper.ScopeToModule(identitymoduletypes.ModuleName)
+	app.ScopedIdentityKeeper = scopedIdentityKeeper
+	app.IdentityKeeper = *identitymodulekeeper.NewKeeper(
 		appCodec,
-		keys[registrymoduletypes.StoreKey],
-		keys[registrymoduletypes.MemStoreKey],
+		keys[identitymoduletypes.StoreKey],
+		keys[identitymoduletypes.MemStoreKey],
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedIdentityKeeper,
 	)
-	registryModule := registrymodule.NewAppModule(appCodec, app.RegistryKeeper)
+	identityModule := identitymodule.NewAppModule(appCodec, app.IdentityKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferModule)
+	ibcRouter.AddRoute(identitymoduletypes.ModuleName, identityModule)
 	// this line is used by starport scaffolding # ibc/app/router
 	app.IBCKeeper.SetRouter(ibcRouter)
 
@@ -388,7 +395,7 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
-		registryModule,
+		identityModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -423,7 +430,7 @@ func New(
 		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
 		ibctransfertypes.ModuleName,
-		registrymoduletypes.ModuleName,
+		identitymoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -611,7 +618,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
-	paramsKeeper.Subspace(registrymoduletypes.ModuleName)
+	paramsKeeper.Subspace(identitymoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

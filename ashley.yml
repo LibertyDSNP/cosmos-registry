@@ -1,0 +1,15 @@
+accounts:
+  - name: taco
+    coins: ["1000token", "100000000stake"]
+  - name: burrito
+    coins: ["500token", "100000000stake"]
+validator:
+  name: taco
+  staked: "100000000stake"
+faucet:
+  name: burrito
+  coins: ["5token", "100000stake"]
+genesis:
+  chain_id: "ashley"
+init: 
+  home: "$HOME/Documents/Code/ProjectLiberty/cosmos/registry/.ashley"
