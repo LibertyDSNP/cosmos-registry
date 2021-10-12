@@ -1,4 +1,4 @@
-# registry
+# WIP Cosmos registry module
 **registry** is a blockchain built using Cosmos SDK and Tendermint and created with [Starport](https://github.com/tendermint/starport).
 
 ## Get started
@@ -9,10 +9,57 @@ starport chain serve
 
 `serve` command installs dependencies, builds, initializes, and starts your blockchain in development.
 
+For my example, you will need two run 4 commands:
+
+`starport chain serve -c bob.yml -r -f -v` - This will be the "identity" chain that holds the registration/delegation storage
+
+`starport chain serve -c ashley.yml -r -f -v` - This is the other chain that sends identity information
+
+```
+starport relayer configure -a \
+--source-rpc "http://0.0.0.0:26657" \
+--source-faucet "http://0.0.0.0:4500" \
+--source-port "identity" \
+--source-version "identity-1" \
+--source-gasprice "0.0000025stake" \
+--source-prefix "cosmos" \
+--target-rpc "http://0.0.0.0:26659" \
+--target-faucet "http://0.0.0.0:4501" \
+--target-port "identity" \
+--target-version "identity-1" \
+--target-gasprice "0.0000025stake" \
+--target-prefix "cosmos"
+```
+
+`starport relayer connect`
+
+If you need to restart a chain, you will need to remove the relayer configuration file located at `~/.starport/relayer/config.yml` and then run the relayer configure command again.
+
 ### Configure
 
-Your blockchain in development can be configured with `config.yml`. To learn more, see the [Starport docs](https://docs.starport.network).
+Your blockchain in development can be configured with `config.yml`, I've created config yamls for two chains -> `ashley.yml` and `bob.yml`. These two chains are conifgured with ports that allow them to communicate with each other. To learn more, see the [Starport docs](https://docs.starport.network).
 
+### Identity Functions
+
+#### Create Registry (handle)
+
+```
+registryd tx identity send-ibc-registration identity channel-0 "firstHandle" --from taco --chain-id ashley --home ~/.ashley
+```
+
+In the `send-ibc-registration` command, the args are [port] [channel] [handle] --from <account on ashley chain> --chain-id <ashley> --home <location of .ashley folder>
+
+This command will create a new dsnpId for the handle and setup an initial delegation entry with the address from the "from" user
+
+#### Update Delegation
+
+```
+registryd tx identity send-ibc-permission-update identity channel-0 "1" “cosmos1qyw382nm5659frpg72vnmxydc4jjp9ne8y8njt” 1 --from taco --chain-id ashley --home ~/.ashley
+```
+
+In the `send-ibc-permission-update` command, the args are [port] [channel] [dsnpId] [address to update/add] [role] --from <account on ashley chain> --chain-id <ashley> --home <location of .ashley folder>
+
+This command will retrieve the existing delegations for the given dsnpId, then if the from user is authorized to change delegations, the address passed in will either be added to the delgations for the dsnpId or the role of it's existing delegation will be updated.
 ### Launch
 
 To launch your blockchain live on multiple nodes, use `starport network` commands. Learn more about [Starport Network](https://github.com/tendermint/spn).
