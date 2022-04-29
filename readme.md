@@ -1,5 +1,7 @@
-# WIP Cosmos registry module
-**registry** is a blockchain built using Cosmos SDK and Tendermint and created with [Starport](https://github.com/tendermint/starport).
+# Experimental Cosomos baesd multi-chain structure
+Built using Cosmos SDK and Tendermint and created with [Starport](https://github.com/tendermint/starport).
+
+Regitration chain
 
 ## Get started
 
